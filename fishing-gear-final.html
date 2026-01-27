@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>FISHING GEAR SYSTEM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><linearGradient id="g" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%231e3a8a;stop-opacity:1"/><stop offset="100%" style="stop-color:%230f172a;stop-opacity:1"/></linearGradient></defs><rect width="1000" height="1000" fill="url(%23g)"/></svg>');
+      --primary: #00d9ff;
+      --secondary: #0ea5e9;
+      --accent: #22d3ee;
+      --dark: #0f172a;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg-image) center/cover fixed;
+      min-height: 100vh;
+      color: white;
+      padding-bottom: 80px;
+      position: relative;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(5px);
+      z-index: -1;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(14, 165, 233, 0.1));
+      backdrop-filter: blur(20px);
+      border-bottom: 2px solid rgba(0, 217, 255, 0.3);
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 8px 32px rgba(0, 217, 255, 0.15);
+    }
+    
+    .header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: 3px;
+      text-shadow: 0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.5);
+      animation: glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.5); }
+      50% { text-shadow: 0 0 30px rgba(0, 217, 255, 1), 0 0 60px rgba(0, 217, 255, 0.8); }
+    }
+    
+    .profile-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      cursor: pointer;
+      border: 2px solid var(--primary);
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+      transition: all 0.3s;
+    }
+    
+    .profile-icon:active {
+      transform: scale(0.95);
+    }
+    
+    .profile-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 15px;
+    }
+    
+    .card {
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.05), rgba(14, 165, 233, 0.05));
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--dark);
+      border: none;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 900;
+      width: 100%;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0, 217, 255, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 10px rgba(0, 217, 255, 0.6);
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(135deg, rgba(100, 116, 139, 0.5), rgba(71, 85, 105, 0.5));
+      color: white;
+    }
+    
+    .btn-delete {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      font-size: 12px;
+      padding: 8px 15px;
+      width: auto;
+      margin: 0;
+    }
+    
+    .input, select, textarea {
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      border: 2px solid rgba(0, 217, 255, 0.3);
+      background: rgba(0, 217, 255, 0.05);
+      color: white;
+      font-size: 15px;
+      font-family: 'Noto Sans JP', sans-serif;
+      transition: all 0.3s;
+    }
+    
+    .input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: rgba(0, 217, 255, 0.1);
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+    }
+    
+    .input::placeholder, textarea::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    
+    label {
+      display: block;
+      color: var(--accent);
+      font-weight: 700;
+      margin-top: 12px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .photo-upload {
+      width: 100%;
+      padding: 50px 20px;
+      border: 3px dashed rgba(0, 217, 255, 0.4);
+      border-radius: 15px;
+      text-align: center;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: rgba(0, 217, 255, 0.02);
+    }
+    
+    .photo-upload:active {
+      background: rgba(0, 217, 255, 0.1);
+      border-color: var(--primary);
+    }
+    
+    .photo-preview {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 12px;
+      margin: 10px 0;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+    
+    .record-item {
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.08), rgba(14, 165, 233, 0.08));
+      padding: 18px;
+      border-radius: 15px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(0, 217, 255, 0.2);
+    }
+    
+    .record-item h3 {
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-size: 20px;
+      text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+    }
+    
+    .delete-btn {
+      float: right;
+      margin-left: 10px;
+    }
+    
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.98));
+      backdrop-filter: blur(20px);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      padding: 8px;
+      border-top: 2px solid rgba(0, 217, 255, 0.3);
+      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+    }
+    
+    .nav-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      padding: 10px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+    
+    .nav-btn.active {
+      color: var(--primary);
+      background: rgba(0, 217, 255, 0.15);
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+    }
+    
+    .nav-icon {
+      font-size: 20px;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid rgba(0, 217, 255, 0.2);
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 15px;
+      background: rgba(0, 217, 255, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(0, 217, 255, 0.2);
+    }
+    
+    .stat-number {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--primary);
+      text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+    }
+    
+    .stat-label {
+      font-size: 11px;
+      color: var(--accent);
+      margin-top: 5px;
+      font-weight: 700;
+    }
+    
+    .profile-avatar-large {
+      width: 120px;
+      height: 120px;
+      border-radius: 20px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 900;
+      cursor: pointer;
+      border: 3px solid var(--primary);
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 217, 255, 0.5);
+    }
+    
+    .profile-avatar-large img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .text-center {
+      text-align: center;
+    }
+    
+    select option {
+      background: var(--dark);
+      color: white;
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .chart-container {
+      background: rgba(0, 217, 255, 0.03);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 15px 0;
+      border: 1px solid rgba(0, 217, 255, 0.2);
+    }
+    
+    .chart-bar {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      gap: 10px;
+    }
+    
+    .chart-label {
+      min-width: 80px;
+      font-size: 13px;
+      color: var(--accent);
+    }
+    
+    .chart-bar-fill {
+      height: 25px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 8px;
+      transition: width 0.5s;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(0, 217, 255, 0.3);
+    }
+    
+    .best-record {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+      border: 2px solid rgba(255, 215, 0, 0.5);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 15px 0;
+      text-align: center;
+    }
+    
+    .best-record-title {
+      color: #ffd700;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    
+    .best-record-value {
+      font-size: 36px;
+      font-weight: 900;
+      color: #ffd700;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    }
+    
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin: 15px 0;
+    }
+    
+    .calendar-day {
+      aspect-ratio: 1;
+      background: rgba(0, 217, 255, 0.05);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      border: 1px solid rgba(0, 217, 255, 0.2);
+    }
+    
+    .calendar-day.has-record {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--dark);
+      font-weight: 900;
+      box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+    }
+    
+    .favorite-spot {
+      background: rgba(0, 217, 255, 0.05);
+      padding: 15px;
+      border-radius: 12px;
+      margin: 10px 0;
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .share-btn {
+      background: linear-gradient(135deg, #1DA1F2, #0d8bd9);
+      margin-top: 5px;
+    }
+    
+    .bg-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 15px 0;
+    }
+    
+    .bg-option {
+      aspect-ratio: 16/9;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .bg-option.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+    }
+    
+    .tackle-badge {
+      display: inline-block;
+      background: rgba(0, 217, 255, 0.2);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin: 5px 5px 5px 0;
+      border: 1px solid rgba(0, 217, 255, 0.4);
+    }
+    
+    .expense-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px;
+      background: rgba(0, 217, 255, 0.03);
+      border-radius: 8px;
+      margin: 8px 0;
+      border: 1px solid rgba(0, 217, 255, 0.1);
+    }
+    
+    .expense-total {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--primary);
+      text-align: center;
+      margin: 20px 0;
+      text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+    }
+
+    .schedule-item {
+      background: rgba(0, 217, 255, 0.05);
+      padding: 15px;
+      border-radius: 12px;
+      margin: 10px 0;
+      border-left: 4px solid var(--primary);
+    }
+
+    .schedule-date {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>⚡ FISHING GEAR</h1>
+    <div class="profile-icon" onclick="app.setView('profile')" id="headerProfile">
+      <span id="headerProfileText">釣</span>
+    </div>
+  </div>
+
+  <div class="container" id="content"></div>
+
+  <div class="nav">
+    <button class="nav-btn active" id="navHome" onclick="app.setView('home')">
+      <div class="nav-icon">🏠</div>
+      <div>ホーム</div>
+    </button>
+    <button class="nav-btn" id="navRecord" onclick="app.setView('newRecord')">
+      <div class="nav-icon">➕</div>
+      <div>記録</div>
+    </button>
+    <button class="nav-btn" id="navAnalysis" onclick="app.setView('analysis')">
+      <div class="nav-icon">📊</div>
+      <div>分析</div>
+    </button>
+    <button class="nav-btn" id="navTackle" onclick="app.setView('tackles')">
+      <div class="nav-icon">🎣</div>
+      <div>タックル</div>
+    </button>
+    <button class="nav-btn" id="navMore" onclick="app.setView('more')">
+      <div class="nav-icon">⚙️</div>
+      <div>その他</div>
+    </button>
+  </div>
+
+  <script>
+    const app = {
+      data: {
+        records: JSON.parse(localStorage.getItem('fishingRecords') || '[]'),
+        tackles: JSON.parse(localStorage.getItem('fishingTackles') || '[]'),
+        profile: JSON.parse(localStorage.getItem('fishingProfile') || '{"name":"釣り太郎","avatar":null}'),
+        favorites: JSON.parse(localStorage.getItem('fishingFavorites') || '[]'),
+        schedules: JSON.parse(localStorage.getItem('fishingSchedules') || '[]'),
+        expenses: JSON.parse(localStorage.getItem('fishingExpenses') || '[]'),
+        background: localStorage.getItem('fishingBackground') || 'default'
+      },
+      temp: {
+        photo: null,
+        tacklePhoto: null,
+        profilePhoto: null
+      },
+
+      init() {
+        this.updateBackground();
+        this.updateProfile();
+        this.setView('home');
+      },
+
+      save(key) {
+        localStorage.setItem(key, JSON.stringify(this.data[key.replace('fishing', '').toLowerCase()]));
+      },
+
+      updateBackground() {
+        if (this.data.background !== 'default') {
+          document.body.style.backgroundImage = `url(${this.data.background})`;
+        }
+      },
+
+      updateProfile() {
+        const name = this.data.profile.name || '釣り太郎';
+        const initial = name.charAt(0);
+        
+        document.getElementById('headerProfileText').textContent = initial;
+        
+        if (this.data.profile.avatar) {
+          document.getElementById('headerProfile').innerHTML = `<img src="${this.data.profile.avatar}">`;
+        }
+        
+        this.temp.profilePhoto = this.data.profile.avatar;
+      },
+
+      // 画像圧縮関数（追加）
+      compressImage(file, maxWidth, maxHeight, quality) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              let width = img.width;
+              let height = img.height;
+
+              if (width > height) {
+                if (width > maxWidth) {
+                  height *= maxWidth / width;
+                  width = maxWidth;
+                }
+              } else {
+                if (height > maxHeight) {
+                  width *= maxHeight / height;
+                  height = maxHeight;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+
+              const compressed = canvas.toDataURL('image/jpeg', quality);
+              resolve(compressed);
+            };
+            img.onerror = reject;
+          };
+          reader.onerror = reject;
+        });
+      },
+
+
+
+      setView(view) {
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        
+        const views = {
+          home: () => { document.getElementById('navHome').classList.add('active'); return this.renderHome(); },
+          newRecord: () => { document.getElementById('navRecord').classList.add('active'); return this.renderNewRecord(); },
+          records: () => this.renderRecords(),
+          analysis: () => { document.getElementById('navAnalysis').classList.add('active'); return this.renderAnalysis(); },
+          tackles: () => { document.getElementById('navTackle').classList.add('active'); return this.renderTackles(); },
+          newTackle: () => this.renderNewTackle(),
+          editTackle: (id) => this.renderEditTackle(id),
+          more: () => { document.getElementById('navMore').classList.add('active'); return this.renderMore(); },
+          profile: () => this.renderProfile(),
+          favorites: () => this.renderFavorites(),
+          schedules: () => this.renderSchedules(),
+          expenses: () => this.renderExpenses(),
+          settings: () => this.renderSettings()
+        };
+        
+        const content = typeof view === 'object' ? views[view.name](view.id) : views[view]();
+        document.getElementById('content').innerHTML = content;
+      },
+
+      getMoonAge(date) {
+        const baseDate = new Date('2000-01-06');
+        const diffTime = date - baseDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        return (diffDays % 29.530588853).toFixed(1);
+      },
+
+      getTide(date) {
+        const moonAge = parseFloat(this.getMoonAge(date));
+        if (moonAge < 2 || moonAge > 27) return '大潮';
+        if (moonAge < 7 || moonAge > 22) return '中潮';
+        if (moonAge < 10 || moonAge > 19) return '小潮';
+        if (moonAge < 12 || moonAge > 17) return '長潮';
+        return '若潮';
+      },
+
+      async handlePhotoUpload(e, type) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        let maxWidth, maxHeight, quality;
+        if (type === 'photo') {
+          maxWidth = 1200; maxHeight = 1200; quality = 0.8;
+        } else if (type === 'tacklePhoto') {
+          maxWidth = 1000; maxHeight = 1000; quality = 0.8;
+        } else if (type === 'profilePhoto') {
+          maxWidth = 400; maxHeight = 400; quality = 0.7;
+        }
+
+        try {
+          const compressed = await this.compressImage(file, maxWidth, maxHeight, quality);
+          this.temp[type] = compressed;
+          
+          const previewEl = document.getElementById(`${type}Preview`);
+          if (previewEl) {
+            if (type === 'profilePhoto') {
+              previewEl.innerHTML = `<img src="${compressed}">`;
+            } else {
+              previewEl.innerHTML = `<img src="${compressed}" class="photo-preview">`;
+            }
+          }
+        } catch (error) {
+          alert('画像の処理に失敗しました');
+          console.error(error);
+        }
+      },
+
+
+
+      getLocation() {
+        if (!navigator.geolocation) {
+          alert('位置情報に対応していません');
+          return;
+        }
+        
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            document.getElementById('location').value = `緯度:${pos.coords.latitude.toFixed(6)} 経度:${pos.coords.longitude.toFixed(6)}`;
+          },
+          () => alert('位置情報の取得に失敗しました')
+        );
+      },
+
+      saveRecord() {
+        const fishSpecies = document.getElementById('fishSpecies').value.trim();
+        if (!fishSpecies) {
+          alert('魚種を入力してください');
+          return;
+        }
+
+        const dateValue = document.getElementById('recordDate').value;
+        const date = new Date(dateValue);
+        
+        const record = {
+          id: Date.now(),
+          photo: this.temp.photo,
+          fishSpecies,
+          size: document.getElementById('size').value,
+          weight: document.getElementById('weight').value,
+          location: document.getElementById('location').value,
+          date: dateValue,
+          moonAge: this.getMoonAge(date),
+          tide: this.getTide(date),
+          lure: document.getElementById('lure').value,
+          weather: document.getElementById('weather').value,
+          temperature: document.getElementById('temperature').value,
+          waterTemp: document.getElementById('waterTemp').value,
+          tackleId: document.getElementById('usedTackle').value,
+          notes: document.getElementById('notes').value
+        };
+
+        this.data.records.unshift(record);
+        this.save('fishingRecords');
+        this.temp.photo = null;
+        
+        alert('✅ 記録を保存しました！');
+        this.setView('records');
+      },
+
+      saveTackle() {
+        const name = document.getElementById('tackleName').value.trim();
+        if (!name) {
+          alert('タックル名を入力してください');
+          return;
+        }
+
+        const tackle = {
+          id: Date.now(),
+          photo: this.temp.tacklePhoto,
+          name,
+          rod: document.getElementById('rod').value,
+          reel: document.getElementById('reel').value,
+          lineType: document.getElementById('lineType').value,
+          lineStrength: document.getElementById('lineStrength').value,
+          lineDate: document.getElementById('lineDate').value
+        };
+
+        this.data.tackles.unshift(tackle);
+        this.save('fishingTackles');
+        this.temp.tacklePhoto = null;
+        
+        alert('✅ タックルを登録しました！');
+        this.setView('tackles');
+      },
+
+      updateTackle() {
+        const id = parseInt(document.getElementById('tackleId').value);
+        const index = this.data.tackles.findIndex(t => t.id === id);
+        
+        if (index === -1) return;
+
+        this.data.tackles[index] = {
+          id,
+          photo: this.temp.tacklePhoto || this.data.tackles[index].photo,
+          name: document.getElementById('tackleName').value,
+          rod: document.getElementById('rod').value,
+          reel: document.getElementById('reel').value,
+          lineType: document.getElementById('lineType').value,
+          lineStrength: document.getElementById('lineStrength').value,
+          lineDate: document.getElementById('lineDate').value
+        };
+
+        this.save('fishingTackles');
+        alert('✅ タックルを更新しました！');
+        this.setView('tackles');
+      },
+
+      deleteRecord(id) {
+        if (!confirm('この記録を削除しますか？')) return;
+        this.data.records = this.data.records.filter(r => r.id != id);
+        this.save('fishingRecords');
+        alert('✅ 削除しました');
+        this.setView('records');
+      },
+
+      deleteTackle(id) {
+        if (!confirm('このタックルを削除しますか？')) return;
+        this.data.tackles = this.data.tackles.filter(t => t.id != id);
+        this.save('fishingTackles');
+        alert('✅ 削除しました');
+        this.setView('tackles');
+      },
+
+      saveProfile() {
+        const name = document.getElementById('profileName').value.trim();
+        if (!name) {
+          alert('アカウント名を入力してください');
+          return;
+        }
+        
+        this.data.profile = {
+          name,
+          avatar: this.temp.profilePhoto
+        };
+        
+        this.save('fishingProfile');
+        this.updateProfile();
+        alert('✅ プロフィールを更新しました！');
+      },
+
+      shareRecord(record) {
+        const text = `🎣 ${record.fishSpecies}を釣りました！\nサイズ: ${record.size}cm\n場所: ${record.location}\n\n#釣り #fishing #${record.fishSpecies}`;
+        
+        if (navigator.share) {
+          navigator.share({
+            title: '釣果記録',
+            text: text
+          }).catch(() => {});
+        } else {
+          const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+          window.open(url, '_blank');
+        }
+      },
+
+      addFavorite() {
+        const name = document.getElementById('favName').value.trim();
+        const location = document.getElementById('favLocation').value.trim();
+        
+        if (!name) {
+          alert('名前を入力してください');
+          return;
+        }
+
+        this.data.favorites.push({
+          id: Date.now(),
+          name,
+          location,
+          notes: document.getElementById('favNotes').value
+        });
+
+        this.save('fishingFavorites');
+        alert('✅ お気に入りに追加しました');
+        this.setView('favorites');
+      },
+
+      addSchedule() {
+        const date = document.getElementById('scheduleDate').value;
+        const location = document.getElementById('scheduleLocation').value.trim();
+        
+        if (!date || !location) {
+          alert('日時と場所を入力してください');
+          return;
+        }
+
+        this.data.schedules.push({
+          id: Date.now(),
+          date,
+          location,
+          notes: document.getElementById('scheduleNotes').value
+        });
+
+        this.save('fishingSchedules');
+        alert('✅ 予定を追加しました');
+        this.setView('schedules');
+      },
+
+      addExpense() {
+        const date = document.getElementById('expenseDate').value;
+        const category = document.getElementById('expenseCategory').value;
+        const amount = document.getElementById('expenseAmount').value;
+        
+        if (!date || !amount) {
+          alert('日付と金額を入力してください');
+          return;
+        }
+
+        this.data.expenses.push({
+          id: Date.now(),
+          date,
+          category,
+          amount: parseFloat(amount),
+          notes: document.getElementById('expenseNotes').value
+        });
+
+        this.save('fishingExpenses');
+        alert('✅ 費用を記録しました');
+        this.setView('expenses');
+      },
+
+      updateBackground(bg) {
+        this.data.background = bg;
+        localStorage.setItem('fishingBackground', bg);
+        
+        if (bg === 'default') {
+          document.body.style.backgroundImage = '';
+          document.documentElement.style.setProperty('--bg-image', "url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 1000\"><defs><linearGradient id=\"g\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\"><stop offset=\"0%\" style=\"stop-color:%231e3a8a;stop-opacity:1\"/><stop offset=\"100%\" style=\"stop-color:%230f172a;stop-opacity:1\"/></linearGradient></defs><rect width=\"1000\" height=\"1000\" fill=\"url(%23g)\"/></svg>')");
+        } else {
+          document.body.style.backgroundImage = `url(${bg})`;
+        }
+      },
+
+      renderHome() {
+        const recentRecords = this.data.records.slice(0, 3);
+        const upcomingSchedules = this.data.schedules
+          .filter(s => new Date(s.date) >= new Date())
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .slice(0, 2);
+        
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; text-align: center; color: var(--primary); text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);">
+              ようこそ、${this.data.profile.name}さん
+            </h2>
+            
+            <div class="stats">
+              <div class="stat-item">
+                <div class="stat-number">${this.data.records.length}</div>
+                <div class="stat-label">釣果</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">${this.data.tackles.length}</div>
+                <div class="stat-label">タックル</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">${this.data.favorites.length}</div>
+                <div class="stat-label">お気に入り</div>
+              </div>
+            </div>
+
+            ${upcomingSchedules.length > 0 ? `
+              <div style="margin-top: 20px;">
+                <h3 style="color: var(--accent); margin-bottom: 10px;">📅 次の釣行予定</h3>
+                ${upcomingSchedules.map(s => `
+                  <div class="schedule-item">
+                    <div class="schedule-date">${new Date(s.date).toLocaleString('ja-JP', {month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'})}</div>
+                    <div style="color: var(--accent);">📍 ${s.location}</div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            
+            <div class="grid-2" style="margin-top: 20px;">
+              <button class="btn" onclick="app.setView('newRecord')">➕ 新規記録</button>
+              <button class="btn" onclick="app.setView('analysis')">📊 分析</button>
+            </div>
+
+            ${recentRecords.length > 0 ? `
+              <div style="margin-top: 25px;">
+                <h3 style="color: var(--accent); margin-bottom: 12px; font-size: 16px;">🎣 最近の釣果</h3>
+                ${recentRecords.map(r => `
+                  <div class="record-item" style="cursor: pointer;" onclick="app.setView('records')">
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                      ${r.photo ? `<img src="${r.photo}" style="width: 70px; height: 70px; border-radius: 10px; object-fit: cover;">` : ''}
+                      <div style="flex: 1;">
+                        <div style="color: var(--primary); font-weight: 700; font-size: 16px;">${r.fishSpecies}</div>
+                        <div style="font-size: 13px; color: var(--accent); margin-top: 4px;">
+                          ${new Date(r.date).toLocaleDateString('ja-JP')}
+                        </div>
+                        ${r.size ? `<div style="font-size: 13px; color: #6ee7b7; margin-top: 2px;">📏 ${r.size}cm</div>` : ''}
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : '<div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5); margin-top: 20px;">まだ記録がありません<br>最初の釣果を記録しましょう！</div>'}
+          </div>
+        `;
+      },
+
+      renderNewRecord() {
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">新規記録</h2>
+            
+            <label>📷 写真</label>
+            <input type="file" accept="image/*" capture="environment" id="photoInput" onchange="app.handlePhotoUpload(event, 'photo')" style="display:none;">
+            <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+              <div id="photoPreview">📷 タップして撮影 / アップロード</div>
+            </div>
+            
+            <label>🐟 魚種 <span style="color:#ef4444;">*</span></label>
+            <input type="text" class="input" id="fishSpecies" placeholder="例: ブラックバス">
+            
+            <div class="grid-2">
+              <div>
+                <label>📏 サイズ (cm)</label>
+                <input type="number" class="input" id="size" placeholder="40" step="0.1">
+              </div>
+              <div>
+                <label>⚖️ 重量 (g)</label>
+                <input type="number" class="input" id="weight" placeholder="1500">
+              </div>
+            </div>
+            
+            <label>📍 場所</label>
+            <div style="display: flex; gap: 10px;">
+              <input type="text" class="input" id="location" placeholder="例: 琵琶湖" style="flex: 1; margin: 0;">
+              <button class="btn" onclick="app.getLocation()" style="width: auto; padding: 14px 20px; margin: 0;">GPS</button>
+            </div>
+            
+            <label>📅 日時</label>
+            <input type="datetime-local" class="input" id="recordDate" value="${new Date().toISOString().slice(0, 16)}">
+            <div style="color: var(--accent); font-size: 13px; margin-top: -10px; margin-bottom: 15px;">
+              🌙 月齢・潮汐は自動計算されます
+            </div>
+            
+            <label>🎯 ルアー / 仕掛け / エサ</label>
+            <input type="text" class="input" id="lure" placeholder="例: クランクベイト 5cm">
+            
+            <div class="grid-3">
+              <div>
+                <label>☁️ 天気</label>
+                <select class="input" id="weather">
+                  <option value="">-</option>
+                  <option value="晴れ">☀️ 晴れ</option>
+                  <option value="曇り">☁️ 曇り</option>
+                  <option value="雨">🌧️ 雨</option>
+                  <option value="雪">❄️ 雪</option>
+                </select>
+              </div>
+              <div>
+                <label>🌡️ 気温 (℃)</label>
+                <input type="number" class="input" id="temperature" placeholder="25" step="0.1">
+              </div>
+              <div>
+                <label>💧 水温 (℃)</label>
+                <input type="number" class="input" id="waterTemp" placeholder="20" step="0.1">
+              </div>
+            </div>
+            
+            <label>🎣 使用タックル</label>
+            <select class="input" id="usedTackle">
+              <option value="">選択してください</option>
+              ${this.data.tackles.map(t => `<option value="${t.id}">${t.name}</option>`).join('')}
+            </select>
+            
+            <label>📝 メモ</label>
+            <textarea class="input" id="notes" placeholder="釣り場の状況やポイントなど..."></textarea>
+            
+            <button class="btn" onclick="app.saveRecord()">💾 記録を保存</button>
+            <button class="btn btn-secondary" onclick="app.setView('home')">戻る</button>
+          </div>
+        `;
+      },
+
+      renderRecords() {
+        if (this.data.records.length === 0) {
+          return `
+            <div class="card text-center" style="padding: 60px 20px;">
+              <div style="font-size: 60px; margin-bottom: 20px;">🎣</div>
+              <p style="color: var(--accent); margin-bottom: 30px;">まだ記録がありません</p>
+              <button class="btn" onclick="app.setView('newRecord')">➕ 最初の記録を追加</button>
+              <button class="btn btn-secondary" onclick="app.setView('home')">戻る</button>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">釣果一覧 (${this.data.records.length}件)</h2>
+            
+            ${this.data.records.map(r => {
+              const tackle = this.data.tackles.find(t => t.id == r.tackleId);
+              return `
+                <div class="record-item">
+                  <button class="delete-btn btn-delete" onclick="app.deleteRecord(${r.id})">🗑️</button>
+                  <h3>🐟 ${r.fishSpecies}</h3>
+                  
+                  ${r.photo ? `<img src="${r.photo}" class="photo-preview">` : ''}
+                  
+                  <div style="margin-top: 12px; line-height: 1.8;">
+                    ${r.size ? `<div>📏 サイズ: <strong style="color: var(--accent);">${r.size}cm</strong></div>` : ''}
+                    ${r.weight ? `<div>⚖️ 重量: <strong style="color: var(--accent);">${r.weight}g</strong></div>` : ''}
+                    ${r.location ? `<div>📍 場所: ${r.location}</div>` : ''}
+                    <div>📅 日時: ${new Date(r.date).toLocaleString('ja-JP')}</div>
+                    ${r.moonAge ? `<div>🌙 月齢: ${r.moonAge} / 潮汐: ${r.tide}</div>` : ''}
+                    ${r.lure ? `<div>🎯 ルアー: ${r.lure}</div>` : ''}
+                    ${r.weather ? `<div>☁️ 天気: ${r.weather}${r.temperature ? ` / ${r.temperature}℃` : ''}${r.waterTemp ? ` / 水温${r.waterTemp}℃` : ''}</div>` : ''}
+                    ${tackle ? `<div>🎣 タックル: <span class="tackle-badge">${tackle.name}</span></div>` : ''}
+                    ${r.notes ? `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,217,255,0.2);">📝 ${r.notes}</div>` : ''}
+                  </div>
+                  
+                  <button class="btn share-btn" onclick="app.shareRecord(${JSON.stringify(r).replace(/"/g, '&quot;')})">📤 SNSでシェア</button>
+                </div>
+              `;
+            }).join('')}
+            
+            <button class="btn btn-secondary" onclick="app.setView('home')" style="margin-top: 20px;">戻る</button>
+          </div>
+        `;
+      },
+
+      renderAnalysis() {
+        if (this.data.records.length === 0) {
+          return `
+            <div class="card text-center" style="padding: 60px 20px;">
+              <div style="font-size: 60px; margin-bottom: 20px;">📊</div>
+              <p style="color: var(--accent); margin-bottom: 30px;">分析するデータがありません<br>まずは釣果を記録しましょう！</p>
+              <button class="btn" onclick="app.setView('newRecord')">➕ 記録を追加</button>
+              <button class="btn btn-secondary" onclick="app.setView('home')">戻る</button>
+            </div>
+          `;
+        }
+
+        // ベスト記録
+        const bestSize = Math.max(...this.data.records.filter(r => r.size).map(r => parseFloat(r.size)));
+        const bestWeight = Math.max(...this.data.records.filter(r => r.weight).map(r => parseFloat(r.weight)));
+
+        // 魚種別統計
+        const speciesCount = {};
+        this.data.records.forEach(r => {
+          speciesCount[r.fishSpecies] = (speciesCount[r.fishSpecies] || 0) + 1;
+        });
+        const topSpecies = Object.entries(speciesCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const maxCount = topSpecies[0]?.[1] || 1;
+
+        // 月別統計
+        const monthlyCount = {};
+        this.data.records.forEach(r => {
+          const month = new Date(r.date).toLocaleDateString('ja-JP', {year: 'numeric', month: 'long'});
+          monthlyCount[month] = (monthlyCount[month] || 0) + 1;
+        });
+        const monthlyData = Object.entries(monthlyCount).sort((a, b) => new Date(a[0]) - new Date(b[0])).slice(-6);
+        const maxMonthly = Math.max(...monthlyData.map(m => m[1]));
+
+        // カレンダー（今月）
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        const recordDates = new Set(
+          this.data.records
+            .filter(r => {
+              const d = new Date(r.date);
+              return d.getFullYear() === year && d.getMonth() === month;
+            })
+            .map(r => new Date(r.date).getDate())
+        );
+
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">📊 釣果分析</h2>
+            
+            <div class="grid-2">
+              <div class="best-record">
+                <div class="best-record-title">🏆 最大サイズ</div>
+                <div class="best-record-value">${bestSize > 0 ? bestSize + 'cm' : '-'}</div>
+              </div>
+              <div class="best-record">
+                <div class="best-record-title">🏆 最大重量</div>
+                <div class="best-record-value">${bestWeight > 0 ? bestWeight + 'g' : '-'}</div>
+              </div>
+            </div>
+
+            <h3 style="color: var(--accent); margin: 25px 0 15px; font-size: 16px;">🐟 魚種別釣果（TOP5）</h3>
+            <div class="chart-container">
+              ${topSpecies.map(([species, count]) => `
+                <div class="chart-bar">
+                  <div class="chart-label">${species}</div>
+                  <div class="chart-bar-fill" style="width: ${(count / maxCount) * 100}%;">${count}匹</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <h3 style="color: var(--accent); margin: 25px 0 15px; font-size: 16px;">📈 月別釣果（直近6ヶ月）</h3>
+            <div class="chart-container">
+              ${monthlyData.map(([month, count]) => `
+                <div class="chart-bar">
+                  <div class="chart-label">${month.split('年')[1]}</div>
+                  <div class="chart-bar-fill" style="width: ${(count / maxMonthly) * 100}%;">${count}匹</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <h3 style="color: var(--accent); margin: 25px 0 15px; font-size: 16px;">📅 釣果カレンダー（${year}年${month + 1}月）</h3>
+            <div class="calendar">
+              ${['日', '月', '火', '水', '木', '金', '土'].map(d => `
+                <div class="calendar-day" style="font-weight: 700; color: var(--accent);">${d}</div>
+              `).join('')}
+              ${Array(firstDay).fill(0).map(() => '<div class="calendar-day"></div>').join('')}
+              ${Array.from({length: daysInMonth}, (_, i) => i + 1).map(day => `
+                <div class="calendar-day ${recordDates.has(day) ? 'has-record' : ''}">${day}</div>
+              `).join('')}
+            </div>
+
+            <button class="btn btn-secondary" onclick="app.setView('home')" style="margin-top: 25px;">戻る</button>
+          </div>
+        `;
+      },
+
+      renderTackles() {
+        if (this.data.tackles.length === 0) {
+          return `
+            <div class="card text-center" style="padding: 60px 20px;">
+              <div style="font-size: 60px; margin-bottom: 20px;">🎣</div>
+              <p style="color: var(--accent); margin-bottom: 30px;">まだタックルがありません</p>
+              <button class="btn" onclick="app.setView('newTackle')">➕ 最初のタックルを登録</button>
+              <button class="btn btn-secondary" onclick="app.setView('home')">戻る</button>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">🎣 タックル一覧 (${this.data.tackles.length}件)</h2>
+            
+            <button class="btn" onclick="app.setView('newTackle')" style="margin-bottom: 20px;">➕ 新規登録</button>
+            
+            ${this.data.tackles.map(t => {
+              const usageCount = this.data.records.filter(r => r.tackleId == t.id).length;
+              const daysSinceLineChange = t.lineDate ? Math.floor((new Date() - new Date(t.lineDate)) / (1000 * 60 * 60 * 24)) : null;
+              
+              return `
+                <div class="record-item">
+                  <button class="delete-btn btn-delete" onclick="app.deleteTackle(${t.id})">🗑️</button>
+                  <h3>🎣 ${t.name}</h3>
+                  
+                  ${t.photo ? `<img src="${t.photo}" class="photo-preview">` : ''}
+                  
+                  <div style="margin-top: 12px; line-height: 1.8;">
+                    ${t.rod ? `<div>🎣 ロッド: ${t.rod}</div>` : ''}
+                    ${t.reel ? `<div>🎣 リール: ${t.reel}</div>` : ''}
+                    ${t.lineType ? `<div>🧵 ライン: ${t.lineType}${t.lineStrength ? ` ${t.lineStrength}lb` : ''}</div>` : ''}
+                    ${t.lineDate ? `
+                      <div style="color: ${daysSinceLineChange > 180 ? '#ef4444' : daysSinceLineChange > 90 ? '#fbbf24' : '#6ee7b7'};">
+                        ⏰ ライン交換: ${new Date(t.lineDate).toLocaleDateString('ja-JP')} (${daysSinceLineChange}日前)
+                        ${daysSinceLineChange > 180 ? ' ⚠️ 交換推奨' : daysSinceLineChange > 90 ? ' ⚠️ 要確認' : ''}
+                      </div>
+                    ` : ''}
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,217,255,0.2);">
+                      📊 使用回数: <strong style="color: var(--accent);">${usageCount}回</strong>
+                    </div>
+                  </div>
+                  
+                  <button class="btn" onclick="app.setView({name: 'editTackle', id: ${t.id}})" style="margin-top: 10px;">✏️ 編集</button>
+                </div>
+              `;
+            }).join('')}
+            
+            <button class="btn btn-secondary" onclick="app.setView('home')" style="margin-top: 20px;">戻る</button>
+          </div>
+        `;
+      },
+
+      renderNewTackle() {
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">タックル登録</h2>
+            
+            <label>📷 写真</label>
+            <input type="file" accept="image/*" id="tacklePhotoInput" onchange="app.handlePhotoUpload(event, 'tacklePhoto')" style="display:none;">
+            <div class="photo-upload" onclick="document.getElementById('tacklePhotoInput').click()">
+              <div id="tacklePhotoPreview">📷 タップして撮影 / アップロード</div>
+            </div>
+            
+            <label>📛 タックル名 <span style="color:#ef4444;">*</span></label>
+            <input type="text" class="input" id="tackleName" placeholder="例: バス釣り用セット">
+            
+            <label>🎣 ロッド</label>
+            <input type="text" class="input" id="rod" placeholder="例: シマノ バスワンXT 6.6ft">
+            
+            <label>🎣 リール</label>
+            <input type="text" class="input" id="reel" placeholder="例: ダイワ タトゥーラ SV TW">
+            
+            <div class="grid-2">
+              <div>
+                <label>🧵 ライン種類</label>
+                <select class="input" id="lineType">
+                  <option value="">選択</option>
+                  <option value="ナイロン">ナイロン</option>
+                  <option value="フロロカーボン">フロロカーボン</option>
+                  <option value="PE">PE</option>
+                  <option value="エステル">エステル</option>
+                </select>
+              </div>
+              <div>
+                <label>💪 強度 (lb)</label>
+                <input type="text" class="input" id="lineStrength" placeholder="12">
+              </div>
+            </div>
+            
+            <label>⏰ ライン交換日</label>
+            <input type="date" class="input" id="lineDate" value="${new Date().toISOString().slice(0, 10)}">
+            
+            <button class="btn" onclick="app.saveTackle()">💾 タックルを登録</button>
+            <button class="btn btn-secondary" onclick="app.setView('tackles')">戻る</button>
+          </div>
+        `;
+      },
+
+      renderEditTackle(id) {
+        const tackle = this.data.tackles.find(t => t.id === id);
+        if (!tackle) {
+          this.setView('tackles');
+          return '';
+        }
+
+        this.temp.tacklePhoto = tackle.photo;
+
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">タックル編集</h2>
+            
+            <input type="hidden" id="tackleId" value="${tackle.id}">
+            
+            <label>📷 写真</label>
+            <input type="file" accept="image/*" id="tacklePhotoInput" onchange="app.handlePhotoUpload(event, 'tacklePhoto')" style="display:none;">
+            <div class="photo-upload" onclick="document.getElementById('tacklePhotoInput').click()">
+              <div id="tacklePhotoPreview">
+                ${tackle.photo ? `<img src="${tackle.photo}" class="photo-preview">` : '📷 タップして撮影 / アップロード'}
+              </div>
+            </div>
+            
+            <label>📛 タックル名 <span style="color:#ef4444;">*</span></label>
+            <input type="text" class="input" id="tackleName" value="${tackle.name}" placeholder="例: バス釣り用セット">
+            
+            <label>🎣 ロッド</label>
+            <input type="text" class="input" id="rod" value="${tackle.rod || ''}" placeholder="例: シマノ バスワンXT 6.6ft">
+            
+            <label>🎣 リール</label>
+            <input type="text" class="input" id="reel" value="${tackle.reel || ''}" placeholder="例: ダイワ タトゥーラ SV TW">
+            
+            <div class="grid-2">
+              <div>
+                <label>🧵 ライン種類</label>
+                <select class="input" id="lineType">
+                  <option value="">選択</option>
+                  <option value="ナイロン" ${tackle.lineType === 'ナイロン' ? 'selected' : ''}>ナイロン</option>
+                  <option value="フロロカーボン" ${tackle.lineType === 'フロロカーボン' ? 'selected' : ''}>フロロカーボン</option>
+                  <option value="PE" ${tackle.lineType === 'PE' ? 'selected' : ''}>PE</option>
+                  <option value="エステル" ${tackle.lineType === 'エステル' ? 'selected' : ''}>エステル</option>
+                </select>
+              </div>
+              <div>
+                <label>💪 強度 (lb)</label>
+                <input type="text" class="input" id="lineStrength" value="${tackle.lineStrength || ''}" placeholder="12">
+              </div>
+            </div>
+            
+            <label>⏰ ライン交換日</label>
+            <input type="date" class="input" id="lineDate" value="${tackle.lineDate || new Date().toISOString().slice(0, 10)}">
+            
+            <button class="btn" onclick="app.updateTackle()">💾 更新</button>
+            <button class="btn btn-secondary" onclick="app.setView('tackles')">戻る</button>
+          </div>
+        `;
+      },
+
+      renderMore() {
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">⚙️ その他</h2>
+            
+            <button class="btn" onclick="app.setView('profile')">👤 プロフィール</button>
+            <button class="btn" onclick="app.setView('favorites')">📍 お気に入り釣り場 (${this.data.favorites.length})</button>
+            <button class="btn" onclick="app.setView('schedules')">📅 釣行予定 (${this.data.schedules.length})</button>
+            <button class="btn" onclick="app.setView('expenses')">💰 釣行費用記録 (${this.data.expenses.length})</button>
+            <button class="btn" onclick="app.setView('settings')">🎨 設定</button>
+            <button class="btn btn-secondary" onclick="app.setView('home')">戻る</button>
+          </div>
+        `;
+      },
+
+      renderProfile() {
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; text-align: center; color: var(--primary);">👤 プロフィール</h2>
+            
+            <div class="text-center">
+              <input type="file" accept="image/*" id="profilePhotoInput" onchange="app.handlePhotoUpload(event, 'profilePhoto')" style="display:none;">
+              <div class="profile-avatar-large" onclick="document.getElementById('profilePhotoInput').click()">
+                <div id="profilePhotoPreview">
+                  ${this.data.profile.avatar ? `<img src="${this.data.profile.avatar}">` : `<span>${this.data.profile.name.charAt(0)}</span>`}
+                </div>
+              </div>
+              <p style="color: var(--accent); font-size: 13px; margin-bottom: 25px;">タップして変更</p>
+            </div>
+            
+            <label>👤 アカウント名</label>
+            <input type="text" class="input" id="profileName" value="${this.data.profile.name}" placeholder="例: 釣り太郎">
+            
+            <button class="btn" onclick="app.saveProfile()">💾 プロフィールを更新</button>
+            
+            <div class="stats">
+              <div class="stat-item">
+                <div class="stat-number">${this.data.records.length}</div>
+                <div class="stat-label">釣果記録</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">${this.data.tackles.length}</div>
+                <div class="stat-label">タックル</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">${this.data.favorites.length}</div>
+                <div class="stat-label">お気に入り</div>
+              </div>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="app.setView('more')" style="margin-top: 25px;">戻る</button>
+          </div>
+        `;
+      },
+
+      renderFavorites() {
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">📍 お気に入り釣り場</h2>
+            
+            ${this.data.favorites.length > 0 ? `
+              ${this.data.favorites.map(f => `
+                <div class="favorite-spot">
+                  <div>
+                    <div style="color: var(--primary); font-weight: 700; margin-bottom: 5px;">${f.name}</div>
+                    ${f.location ? `<div style="font-size: 13px; color: var(--accent);">📍 ${f.location}</div>` : ''}
+                    ${f.notes ? `<div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 5px;">${f.notes}</div>` : ''}
+                  </div>
+                  <button class="btn-delete" onclick="if(confirm('削除しますか？')) { app.data.favorites = app.data.favorites.filter(x => x.id != ${f.id}); app.save('fishingFavorites'); app.setView('favorites'); }">🗑️</button>
+                </div>
+              `).join('')}
+            ` : '<div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">まだお気に入りがありません</div>'}
+            
+            <h3 style="color: var(--accent); margin: 25px 0 15px; font-size: 16px;">➕ 新規追加</h3>
+            
+            <label>名前 *</label>
+            <input type="text" class="input" id="favName" placeholder="例: 琵琶湖 南湖">
+            
+            <label>場所</label>
+            <input type="text" class="input" id="favLocation" placeholder="例: 滋賀県大津市">
+            
+            <label>メモ</label>
+            <textarea class="input" id="favNotes" placeholder="駐車場情報、ポイントの特徴など..."></textarea>
+            
+            <button class="btn" onclick="app.addFavorite()">💾 追加</button>
+            <button class="btn btn-secondary" onclick="app.setView('more')">戻る</button>
+          </div>
+        `;
+      },
+
+      renderSchedules() {
+        const upcoming = this.data.schedules.filter(s => new Date(s.date) >= new Date()).sort((a, b) => new Date(a.date) - new Date(b.date));
+        const past = this.data.schedules.filter(s => new Date(s.date) < new Date()).sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">📅 釣行予定</h2>
+            
+            ${upcoming.length > 0 ? `
+              <h3 style="color: var(--accent); margin-bottom: 12px; font-size: 16px;">これからの予定</h3>
+              ${upcoming.map(s => `
+                <div class="schedule-item">
+                  <button class="delete-btn btn-delete" onclick="if(confirm('削除しますか？')) { app.data.schedules = app.data.schedules.filter(x => x.id != ${s.id}); app.save('fishingSchedules'); app.setView('schedules'); }">🗑️</button>
+                  <div class="schedule-date">${new Date(s.date).toLocaleString('ja-JP')}</div>
+                  <div style="color: var(--accent); margin-top: 5px;">📍 ${s.location}</div>
+                  ${s.notes ? `<div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 5px;">${s.notes}</div>` : ''}
+                </div>
+              `).join('')}
+            ` : ''}
+            
+            ${past.length > 0 ? `
+              <h3 style="color: rgba(255,255,255,0.5); margin: 25px 0 12px; font-size: 16px;">過去の予定</h3>
+              ${past.slice(0, 5).map(s => `
+                <div class="schedule-item" style="opacity: 0.6;">
+                  <button class="delete-btn btn-delete" onclick="if(confirm('削除しますか？')) { app.data.schedules = app.data.schedules.filter(x => x.id != ${s.id}); app.save('fishingSchedules'); app.setView('schedules'); }">🗑️</button>
+                  <div class="schedule-date">${new Date(s.date).toLocaleString('ja-JP')}</div>
+                  <div style="color: var(--accent); margin-top: 5px;">📍 ${s.location}</div>
+                </div>
+              `).join('')}
+            ` : ''}
+            
+            ${this.data.schedules.length === 0 ? '<div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">まだ予定がありません</div>' : ''}
+            
+            <h3 style="color: var(--accent); margin: 25px 0 15px; font-size: 16px;">➕ 新規予定</h3>
+            
+            <label>日時 *</label>
+            <input type="datetime-local" class="input" id="scheduleDate">
+            
+            <label>場所 *</label>
+            <input type="text" class="input" id="scheduleLocation" placeholder="例: 琵琶湖">
+            
+            <label>メモ</label>
+            <textarea class="input" id="scheduleNotes" placeholder="持ち物、同行者など..."></textarea>
+            
+            <button class="btn" onclick="app.addSchedule()">💾 追加</button>
+            <button class="btn btn-secondary" onclick="app.setView('more')">戻る</button>
+          </div>
+        `;
+      },
+
+      renderExpenses() {
+        const total = this.data.expenses.reduce((sum, e) => sum + e.amount, 0);
+        const byCategory = {};
+        this.data.expenses.forEach(e => {
+          byCategory[e.category] = (byCategory[e.category] || 0) + e.amount;
+        });
+        
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">💰 釣行費用記録</h2>
+            
+            ${this.data.expenses.length > 0 ? `
+              <div class="expense-total">¥${total.toLocaleString()}</div>
+              
+              ${Object.keys(byCategory).length > 0 ? `
+                <h3 style="color: var(--accent); margin-bottom: 12px; font-size: 16px;">カテゴリ別</h3>
+                <div class="chart-container">
+                  ${Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([cat, amount]) => `
+                    <div class="chart-bar">
+                      <div class="chart-label">${cat}</div>
+                      <div class="chart-bar-fill" style="width: ${(amount / total) * 100}%;">¥${amount.toLocaleString()}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+              
+              <h3 style="color: var(--accent); margin: 25px 0 12px; font-size: 16px;">明細</h3>
+              ${this.data.expenses.slice().reverse().map(e => `
+                <div class="expense-item">
+                  <div>
+                    <div style="font-weight: 700; color: var(--primary);">${e.category}</div>
+                    <div style="font-size: 12px; color: var(--accent); margin-top: 3px;">
+                      ${new Date(e.date).toLocaleDateString('ja-JP')}
+                    </div>
+                    ${e.notes ? `<div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 3px;">${e.notes}</div>` : ''}
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="font-weight: 700; color: var(--primary);">¥${e.amount.toLocaleString()}</div>
+                    <button class="btn-delete" onclick="if(confirm('削除しますか？')) { app.data.expenses = app.data.expenses.filter(x => x.id != ${e.id}); app.save('fishingExpenses'); app.setView('expenses'); }">🗑️</button>
+                  </div>
+                </div>
+              `).join('')}
+            ` : '<div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">まだ記録がありません</div>'}
+            
+            <h3 style="color: var(--accent); margin: 25px 0 15px; font-size: 16px;">➕ 新規記録</h3>
+            
+            <label>日付 *</label>
+            <input type="date" class="input" id="expenseDate" value="${new Date().toISOString().slice(0, 10)}">
+            
+            <label>カテゴリ *</label>
+            <select class="input" id="expenseCategory">
+              <option value="ガソリン代">⛽ ガソリン代</option>
+              <option value="エサ代">🐟 エサ代</option>
+              <option value="ルアー代">🎯 ルアー代</option>
+              <option value="タックル代">🎣 タックル代</option>
+              <option value="遊漁券">🎫 遊漁券</option>
+              <option value="食事代">🍱 食事代</option>
+              <option value="その他">📝 その他</option>
+            </select>
+            
+            <label>金額 (円) *</label>
+            <input type="number" class="input" id="expenseAmount" placeholder="1000">
+            
+            <label>メモ</label>
+            <textarea class="input" id="expenseNotes" placeholder="詳細..."></textarea>
+            
+            <button class="btn" onclick="app.addExpense()">💾 追加</button>
+            <button class="btn btn-secondary" onclick="app.setView('more')">戻る</button>
+          </div>
+        `;
+      },
+
+      renderSettings() {
+        const bgOptions = [
+          { id: 'default', name: 'デフォルト', preview: 'linear-gradient(180deg, #1e3a8a, #0f172a)' },
+          { id: 'ocean', name: '海', preview: 'linear-gradient(180deg, #0c4a6e, #0369a1, #0891b2)' },
+          { id: 'lake', name: '湖', preview: 'linear-gradient(180deg, #1e3a8a, #1e40af, #3b82f6)' },
+          { id: 'sunset', name: '夕焼け', preview: 'linear-gradient(180deg, #7c2d12, #c2410c, #ea580c)' },
+          { id: 'forest', name: '森', preview: 'linear-gradient(180deg, #14532d, #166534, #15803d)' },
+          { id: 'night', name: '夜', preview: 'linear-gradient(180deg, #0f172a, #1e1b4b, #312e81)' }
+        ];
+
+        return `
+          <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">🎨 設定</h2>
+            
+            <h3 style="color: var(--accent); margin-bottom: 15px; font-size: 16px;">背景テーマ</h3>
+            <div class="bg-selector">
+              ${bgOptions.map(bg => `
+                <div 
+                  class="bg-option ${this.data.background === bg.id ? 'active' : ''}" 
+                  style="background: ${bg.preview};"
+                  onclick="app.updateBackground('${bg.id}'); app.setView('settings');"
+                >
+                  <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: rgba(0,0,0,0.3); font-size: 11px; font-weight: 700;">
+                    ${bg.name}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            
+            <h3 style="color: var(--accent); margin: 25px 0 15px; font-size: 16px;">カスタム背景</h3>
+            <input type="file" accept="image/*" id="customBgInput" style="display:none;">
+            <button class="btn" onclick="
+              const input = document.getElementById('customBgInput');
+              input.onchange = async function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                try {
+                  const compressed = await app.compressImage(file, 1920, 1080, 0.85);
+                  app.updateBackground(compressed);
+                  alert('✅ 背景を設定しました！');
+                  setTimeout(() => app.setView('settings'), 100);
+                } catch(error) {
+                  alert('背景の設定に失敗しました');
+                  console.error(error);
+                }
+              };
+              input.click();
+            ">📷 写真から選択</button>
+            
+            <button class="btn btn-secondary" onclick="app.setView('more')" style="margin-top: 25px;">戻る</button>
+          </div>
+        `;
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => app.init());
+  </script>
+</body>
+</html>
